@@ -3,11 +3,9 @@ SET(COINOR_ROOT_DIR "/usr/local/" CACHE PATH "COINOR root directory")
 set(LIB_HINTS "/usr/local/lib/" "opt/coin/lib/" "/opt/elytica/lib/")
 FIND_PATH(COINOR_INCLUDE_DIR
   CoinUtilsConfig.h
-  HINTS ${COINOR_ROOT_DIR}/include/coin
+  HINTS "${COINOR_ROOT_DIR}/include/coin-or"
         "C:/Program Files/COIN/include"
-        "/usr/local/include/coin"
-        "/opt/coin/include/coin"
-        "/opt/elytica/include/coin"
+        "/opt/elytica/include/coin-or"
 )
 find_library(LIB_UTILS NAMES CoinUtils HINTS ${LIB_HINTS} )
 find_library(LIB_CLP NAMES Clp HINTS ${LIB_HINTS} )
