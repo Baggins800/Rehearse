@@ -27,7 +27,6 @@ if (COINOR_FOUND)
   target_link_libraries(${PROJECT_NAME} osi)
   target_link_libraries(${PROJECT_NAME} osi-clp)
   target_link_libraries(${PROJECT_NAME} osi-cbc)
-  target_link_libraries(${PROJECT_NAME} rehearse)
   target_include_directories(${PROJECT_NAME} PUBLIC ${COINOR_INCLUDE_DIRS})
 endif()
 
