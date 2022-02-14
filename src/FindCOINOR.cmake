@@ -1,0 +1,76 @@
+SET(COINOR_ROOT_DIR "/usr/local/" CACHE PATH "COINOR root directory")
+
+set(LIB_HINTS "/usr/local/lib/" "opt/coin/lib/" "/opt/elytica/lib/")
+FIND_PATH(COINOR_INCLUDE_DIR
+  CoinUtilsConfig.h
+  HINTS ${COINOR_ROOT_DIR}/include/coin
+        "C:/Program Files/COIN/include"
+        "/usr/local/include/coin"
+        "/opt/coin/include/coin"
+        "/opt/elytica/include/coin"
+)
+find_library(LIB_UTILS NAMES CoinUtils HINTS ${LIB_HINTS} )
+find_library(LIB_CLP NAMES Clp HINTS ${LIB_HINTS} )
+find_library(LIB_CBC NAMES Cbc HINTS ${LIB_HINTS} )
+find_library(LIB_OSI NAMES Osi HINTS ${LIB_HINTS} )
+find_library(LIB_CGL NAMES Cgl HINTS ${LIB_HINTS} )
+find_library(LIB_OSICLP NAMES OsiClp HINTS ${LIB_HINTS} )
+find_library(LIB_OSICBC NAMES OsiCbc HINTS ${LIB_HINTS} )
+find_library(LIB_REHEARSE NAMES rehearse HINTS ${LIB_HINTS} )
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(COINOR DEFAULT_MSG COINOR_INCLUDE_DIR LIB_CLP LIB_CBC LIB_OSI LIB_OSICLP LIB_OSICBC LIB_REHEARSE LIB_CGL LIB_UTILS)
+
+MARK_AS_ADVANCED(COINOR_INCLUDE_DIR LIB_CLP LIB_CBC LIB_OSI LIB_CGL LIB_CLPSOLVER LIB_CBCSOLVER LIB_OSICLP LIB_OSICBC LIB_REHEARSE LIB_UTILS)
+IF(COINOR_FOUND)
+  SET(COINOR_INCLUDE_DIRS ${COINOR_INCLUDE_DIR})
+  SET(COINOR_LIBRARIES "${LIB_UTILS};${LIB_OSI};${LIB_OSICLP};${LIB_CLP};${LIB_CBC};${LIB_OSICBC};${LIB_REHEARSE}")
+  add_library(coinutils SHARED IMPORTED GLOBAL)
+  set_target_properties(coinutils PROPERTIES
+    IMPORTED_LOCATION "${LIB_UTILS}"
+    INTERFACE_INCLUDE_DIRECTORIES "${COINOR_INCLUDE_DIR}"
+  )
+  add_library(clp SHARED IMPORTED GLOBAL)
+  set_target_properties(clp PROPERTIES
+    IMPORTED_LOCATION "${LIB_CLP}"
+    INTERFACE_INCLUDE_DIRECTORIES "${COINOR_INCLUDE_DIR}"
+  )
+
+  add_library(cbc SHARED IMPORTED GLOBAL)
+  set_target_properties(cbc PROPERTIES
+    IMPORTED_LOCATION "${LIB_CBC}"
+    INTERFACE_INCLUDE_DIRECTORIES "${COINOR_INCLUDE_DIR}")
+
+  add_library(cgl SHARED IMPORTED GLOBAL)
+  set_target_properties(cgl PROPERTIES
+    IMPORTED_LOCATION "${LIB_CGL}"
+    INTERFACE_INCLUDE_DIRECTORIES "${COINOR_INCLUDE_DIR}"
+    INTERFACE_LINK_LIBRARIES "clp;cbc"
+  )
+
+  add_library(osi SHARED IMPORTED GLOBAL)
+  set_target_properties(osi PROPERTIES
+    IMPORTED_LOCATION "${LIB_OSI}"
+    INTERFACE_INCLUDE_DIRECTORIES "${COINOR_INCLUDE_DIR}"
+    INTERFACE_LINK_LIBRARIES "clp;cbc;cgl"
+  )
+
+  add_library(osi-clp SHARED IMPORTED GLOBAL)
+  set_target_properties(osi-clp PROPERTIES
+    IMPORTED_LOCATION "${LIB_OSICLP}"
+    INTERFACE_INCLUDE_DIRECTORIES "${COINOR_INCLUDE_DIR}"
+    INTERFACE_LINK_LIBRARIES "osi;clp;cgl"
+  )
+  add_library(osi-cbc SHARED IMPORTED GLOBAL)
+  set_target_properties(osi-cbc PROPERTIES
+    IMPORTED_LOCATION "${LIB_OSICBC}"
+    INTERFACE_INCLUDE_DIRECTORIES "${COINOR_INCLUDE_DIR}"
+    INTERFACE_LINK_LIBRARIES "osi;cbc;cgl"
+  )
+  add_library(rehearse SHARED IMPORTED GLOBAL)
+  set_target_properties(rehearse PROPERTIES
+    IMPORTED_LOCATION "${LIB_REHEARSE}"
+    INTERFACE_INCLUDE_DIRECTORIES "${COINOR_INCLUDE_DIR}"
+    INTERFACE_LINK_LIBRARIES "coinutils;clp;cbc;osi;osi-clp;osi-cbc;cgl"
+  )
+
+ENDIF(COINOR_FOUND)
